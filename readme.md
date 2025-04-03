@@ -1,5 +1,4 @@
-IcebergAhead.Demo 🚢
-🧊 Лучшие практики устойчивости и наблюдаемости для .NET приложений
+IcebergAhead.Demo 🚢🧊 Лучшие практики устойчивости и наблюдаемости для .NET приложений
 
 Этот проект демонстрирует, как строить отказоустойчивые, масштабируемые и легко поддерживаемые .NET веб-сервисы, используя такие инструменты, как OpenTelemetry, Serilog, Polly, Health Checks и Feature Management.
 
@@ -14,7 +13,6 @@ IcebergAhead.Demo 🚢
 ⚙️ Dynamic Configuration c IOptionsMonitor
 🔐 Защита логов: скрытие email, телефона, пароля и др.
 🔎 HttpClientFactory с resiliency-политиками разного уровня
-
 📂 Структура проекта
 
 IcebergAhead.Demo/ │ ├── Controllers/ - REST API контроллеры ├── Services/ - DI сервисы + DynamicService c live-настройкой ├── FeatureFilters/ - Feature Management фильтры ├── HealthChecks/ - Расширенные Health Checks ├── Logging/ - Middleware и Enricher для маскировки данных из логов ├── Settings/ - POCO-классы для конфигурации ├── OpenTelemetryDIExtension.cs - Конфигурация Telemetry ├── PollyRegistryDIExtension.cs - Polly registry и resiliency-политики ├── Program.cs - Точка входа, настройки DI, API, Health и т.д.
@@ -48,7 +46,6 @@ http://localhost:5000/swagger
 Поддержка TraceId + SpanId в логах
 Поддержка Jaeger Exporter (раскомментируй в OpenTelemetryDIExtension.cs)
 
-
 📉 Health Checks
 Встроенные и кастомные проверки:
 GracefulShutdown
@@ -56,12 +53,10 @@ ExternalAPI (через типизированный HttpClient)
 Random OK (для демонстрации)
 Интерфейс HealthChecks UI поддерживается (раскомментируй в Program.cs)
 
-
 🧠 Feature Management
 Использует Microsoft.FeatureManagement
 Поддержка кастомных фильтров (по User-Agent)
 Примеры в FeatureFlagsController
-
 
 💻 HttpClient + Polly
 Регистрируются политики:
@@ -73,13 +68,11 @@ HttpBin
 WithFallback
 ExternalAPI (strongly typed)
 
-
 📐 Жизненные циклы DI
 Singleton: создается один раз
 Scoped: один на запрос
 Transient: новый экземпляр каждый раз
 DILiveCirclesController демонстрирует GUID-сравнение между Injected Services и IServiceProvider
-
 
 📎 Требования
 .NET SDK 9
@@ -87,10 +80,8 @@ Jaeger (опционально, если нужно трассировка)
 Docker (если захочешь поднять инфраструктуру)
 
 
-
 🧪 Тестирование фич вручную:
 curl http://localhost:5000/api/dynamicconfig curl http://localhost:5000/api/feature-flags/new-feature
-
 
 🧑💻 Контакты
 

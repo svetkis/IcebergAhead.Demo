@@ -35,7 +35,7 @@ public static class OpenTelemetryDIExtension
                         .AddAspNetCoreInstrumentation()
                         .AddHttpClientInstrumentation()
                         //.AddConsoleExporter() //просто для демо
-                                              //.AddJaegerExporter() //закомменитировано потому что не подключен приемник телеметрии
+                        //.AddJaegerExporter() //закомменитировано потому что не подключен приемник телеметрии
                         )
                 .WithLogging(
                     _ => { },
