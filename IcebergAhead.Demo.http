@@ -1,0 +1,6 @@
+@IcebergAheadDemo_HostAddress = http://localhost:5196
+
+GET {{IcebergAheadDemo_HostAddress}}/httpbin/
+Accept: application/json
+
+###
