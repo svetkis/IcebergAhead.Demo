@@ -1,32 +1,33 @@
-﻿using Serilog.Core;
+﻿using Microsoft.Extensions.Options;
+using Serilog.Core;
 using Serilog.Events;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
+using YamlDotNet.Core.Tokens;
 
 namespace IcebergAhead.Demo.Logging;
-
-public class SensitiveDataMaskingEnricher : ILogEventEnricher
+public class SensitiveLoggingOptions
 {
-    private static readonly string[] SensitiveKeys = { "email", "phone", "password", "creditcard" };
+    public string[] SensitiveFields { get; set; }
+}
 
-    public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propertyFactory)
+public class SensitiveDataMaskingEnricher(string[] sensitiveFields) : ILogEventEnricher
+{
+    private readonly HashSet<string> maskingFieldsSet = sensitiveFields?.Select(f => f.ToLowerInvariant()).ToHashSet() ?? new HashSet<string>();
+
+    public void Enrich(LogEvent logEvent, ILogEventPropertyFactory propsFactory)
     {
-        // перебираем все свойства события
-        foreach (var key in SensitiveKeys)
+        var toMasking = logEvent.Properties
+            .Where(p => p.Value is ScalarValue s && s.Value is string)
+            .Where(p => maskingFieldsSet.Contains(p.Key.ToLowerInvariant()))
+            .Select(p => new { p.Key, Value = p.Value.ToString() })
+            .ToList();
+
+
+        foreach (var prop in toMasking)
         {
-            var match = logEvent.Properties
-                .FirstOrDefault(p => string.Equals(p.Key, key, StringComparison.OrdinalIgnoreCase));
-
-            if (!match.Equals(default(KeyValuePair<string, LogEventPropertyValue>)))
-            {
-                var original = match.Value as ScalarValue;
-
-                if (original?.Value is string str)
-                {
-                    var masked = Mask(str, key);
-                    var maskedProp = propertyFactory.CreateProperty(match.Key, masked);
-                    logEvent.AddOrUpdateProperty(maskedProp);
-                }
-            }
+            var maskedProperty = propsFactory.CreateProperty(prop.Key, Mask(prop.Value, prop.Key));
+            logEvent.AddOrUpdateProperty(maskedProperty);
         }
     }
 
@@ -37,7 +38,7 @@ public class SensitiveDataMaskingEnricher : ILogEventEnricher
             "email" => MaskEmail(value),
             "phone" => MaskPhone(value),
             "password" => "passwordWasHere",
-            _ => value
+            _ => $"{key}WasHidden"
         };
     }
 
