@@ -4,24 +4,23 @@ namespace IcebergAhead.Demo.HealthChecks;
 
 public class GracefulShutdownHealthCheck : IHealthCheck
 {
-    private readonly IHostApplicationLifetime _lifetime;
+    private readonly IHostApplicationLifetime _hostAppLifetime;
 
     public GracefulShutdownHealthCheck(IHostApplicationLifetime lifetime)
     {
-        _lifetime = lifetime;
+        _hostAppLifetime = lifetime;
     }
 
-    public Task<HealthCheckResult> CheckHealthAsync(
+    public async Task<HealthCheckResult> CheckHealthAsync(
         HealthCheckContext context,
         CancellationToken cancellationToken = default)
     {
-        // Если приложение уже в состоянии остановки — выдаём Unhealthy
-        if (_lifetime.ApplicationStopping.IsCancellationRequested)
+        // Если приложение в состоянии остановки — выдаём Unhealthy
+        if (_hostAppLifetime.ApplicationStopping.IsCancellationRequested)
         {
-            return Task.FromResult(
-                HealthCheckResult.Unhealthy("App is stopping"));
+            return HealthCheckResult.Unhealthy("App is stopping");
         }
 
-        return Task.FromResult(HealthCheckResult.Healthy("App is running"));
+        return HealthCheckResult.Healthy("App is running");
     }
 }
